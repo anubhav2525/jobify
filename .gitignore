@@ -1,0 +1,253 @@
+# Naukari 2.0 - Job Platform .gitignore
+
+# ==============================================
+# GLOBAL PATTERNS
+# ==============================================
+
+# Operating System Files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# IDE and Editor Files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+.metadata
+.classpath
+.settings/
+*.iml
+*.ipr
+*.iws
+
+# Temporary Files
+*.tmp
+*.temp
+*.log
+*.cache
+
+# ==============================================
+# BACKEND (Spring Boot) - /server
+# ==============================================
+
+# Maven
+server/target/
+server/pom.xml.tag
+server/pom.xml.releaseBackup
+server/pom.xml.versionsBackup
+server/pom.xml.next
+server/release.properties
+server/dependency-reduced-pom.xml
+server/buildNumber.properties
+server/.mvn/timing.properties
+server/.mvn/wrapper/maven-wrapper.jar
+
+# Spring Boot
+server/HELP.md
+server/.gradle
+server/build/
+server/!gradle/wrapper/gradle-wrapper.jar
+server/!**/src/main/**/build/
+server/!**/src/test/**/build/
+
+# Application Configuration (SENSITIVE)
+server/src/main/resources/application.properties
+server/src/main/resources/application-dev.properties
+server/src/main/resources/application-prod.properties
+server/src/main/resources/application-test.properties
+server/src/main/resources/application.yml
+server/src/main/resources/application-*.yml
+
+# Database
+server/src/main/resources/data.sql
+server/src/main/resources/schema.sql
+
+# Logs
+server/logs/
+server/*.log
+server/log/
+
+# H2 Database (if used for testing)
+server/*.db
+server/*.trace.db
+server/*.lock.db
+
+# Upload directories
+server/uploads/
+server/files/
+server/temp/
+
+# ==============================================
+# FRONTEND (Next.js) - /client
+# ==============================================
+
+# Dependencies
+client/node_modules/
+client/npm-debug.log*
+client/yarn-debug.log*
+client/yarn-error.log*
+client/pnpm-debug.log*
+
+# Next.js Build Output
+client/.next/
+client/out/
+client/build/
+client/dist/
+
+# Runtime Data
+client/pids
+client/*.pid
+client/*.seed
+client/*.pid.lock
+
+# Coverage Directory
+client/coverage/
+client/.nyc_output/
+
+# Environment Variables (SENSITIVE)
+client/.env
+client/.env.local
+client/.env.development.local
+client/.env.test.local
+client/.env.production.local
+
+# TypeScript
+client/*.tsbuildinfo
+client/.tsbuildinfo
+
+# ESLint
+client/.eslintcache
+
+# Turbopack
+client/.turbo
+
+# Vercel
+client/.vercel
+
+# PWA files
+client/public/sw.js
+client/public/workbox-*.js
+client/public/worker-*.js
+client/public/sw.js.map
+client/public/workbox-*.js.map
+client/public/worker-*.js.map
+
+# Storybook
+client/.storybook/
+client/storybook-static/
+
+# ==============================================
+# DEVELOPMENT & TESTING
+# ==============================================
+
+# Test Coverage
+coverage/
+.coverage
+htmlcov/
+.pytest_cache/
+.coverage.*
+
+# Package Files
+*.tgz
+*.tar.gz
+
+# ==============================================
+# SECURITY & SENSITIVE DATA
+# ==============================================
+
+# API Keys and Secrets
+*.key
+*.pem
+*.p12
+*.jks
+secrets.json
+config.json
+
+# Certificate Files
+*.crt
+*.cer
+*.der
+
+# Environment and Config Files
+.env*
+!.env.example
+config.properties
+secrets.properties
+
+# ==============================================
+# DEPLOYMENT & DOCKER
+# ==============================================
+
+# Docker
+.docker/
+docker-compose.override.yml
+Dockerfile.dev
+.dockerignore
+
+# Kubernetes
+k8s-secrets.yml
+*.kubeconfig
+
+# ==============================================
+# BACKUP & ARCHIVE FILES
+# ==============================================
+
+# Backup Files
+*.bak
+*.backup
+*.old
+*.orig
+*.save
+
+# Archive Files
+*.zip
+*.rar
+*.7z
+*.tar
+*.gz
+
+# ==============================================
+# DOCUMENTATION & ASSETS
+# ==============================================
+
+# Generated Documentation
+docs/build/
+site/
+
+# Large Media Files (optional - uncomment if needed)
+# *.mp4
+# *.mov
+# *.avi
+# *.mkv
+# *.wmv
+# *.flv
+
+# ==============================================
+# PROJECT SPECIFIC
+# ==============================================
+
+# Resume/CV uploads (if stored locally)
+client/public/uploads/
+server/src/main/resources/static/uploads/
+
+# Generated Reports
+reports/
+*.pdf
+*.xlsx
+*.csv
+
+# Cache directories
+.cache/
+cache/
+
+# Temporary upload directories
+tmp/
+temp/

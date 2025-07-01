@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Account Deactivated</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-neutral-100 py-8">
+<div class="max-w-3xl mx-auto bg-white shadow-lg rounded-lg overflow-hidden">
+    <!-- Header -->
+    <div class="bg-gradient-to-r from-red-600 to-red-700 px-8 py-6">
+        <div class="flex items-center justify-between">
+            <div>
+                <h1 class="text-2xl font-bold text-white" th:text="${companyName ?: 'Your Company'}">Naukari</h1>
+                <p class="text-red-100 text-sm mt-1">Account Status</p>
+            </div>
+            <div class="bg-white bg-opacity-20 rounded-full p-3">
+                <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728L5.636 5.636m12.728 12.728L5.636 5.636"/>
+                </svg>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="px-8 py-8">
+        <!-- Alert Message -->
+        <div class="text-center mb-8">
+            <div class="mb-6">
+                <svg class="w-20 h-20 text-red-600 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M10 14H5.236a2 2 0 01-1.789-2.894l3.5-7A2 2 0 018.736 3h4.018a2 2 0 01.485.06l3.76.7m-7 10v5a2 2 0 002 2h.096c.5 0 .905-.405.905-.904 0-.715.211-1.413.608-2.008L17.294 15M10 14l4.724-2.013a1.998 1.998 0 011.789 2.894l-3.5 7A2 2 0 0110.736 21H6.718a2 2 0 01-.485-.06l-3.76-.7"/>
+                </svg>
+            </div>
+            <h2 class="text-2xl font-semibold text-gray-800 mb-2">Account Deactivated</h2>
+            <p class="text-gray-600">Hello <span class="font-medium text-gray-800"
+                                                 th:text="${userName ?: 'User'}">User</span>, your account has been
+                deactivated.</p>
+        </div>
+
+        <!-- Deactivation Notice -->
+        <div class="bg-red-50 border border-red-200 rounded-lg p-6 mb-8">
+            <div class="flex items-start">
+                <svg class="w-6 h-6 text-red-600 mt-1 mr-3" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd"
+                          d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                          clip-rule="evenodd"/>
+                </svg>
+                <div>
+                    <h3 class="font-semibold text-red-800 mb-2">Account Status: Deactivated</h3>
+                    <p class="text-red-700 text-sm">
+                        Your account has been temporarily deactivated. This means you will not be able to access our
+                        services until your account is reactivated.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- What This Means -->
+        <div class="bg-gray-50 rounded-lg p-6 mb-8">
+            <h3 class="text-xl font-semibold text-gray-800 mb-4">What This Means:</h3>
+            <div class="space-y-3">
+                <div class="flex items-start">
+                    <div class="bg-red-100 rounded-full p-1 mr-3 mt-1">
+                        <svg class="w-4 h-4 text-red-600" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd"
+                                  d="M13.477 14.89A6 6 0 015.11 6.524l8.367 8.368zm1.414-1.414L6.524 5.11a6 6 0 018.367 8.367zM18 10a8 8 0 11-16 0 8 8 0 0116 0z"
+                                  clip-rule="evenodd"/>
+                        </svg>
+                    </div>
+                    <p class="text-gray-700">You cannot log in to your account</p>
+                </div>
+                <div class="flex items-start">
+                    <div class="bg-red-100 rounded-full p-1 mr-3 mt-1">
+                        <svg class="w-4 h-4 text-red-600" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd"
+                                  d="M13.477 14.89A6 6 0 015.11 6.524l8.367 8.368zm1.414-1.414L6.524 5.11a6 6 0 018.367 8.367zM18 10a8 8 0 11-16 0 8 8 0 0116 0z"
+                                  clip-rule="evenodd"/>
+                        </svg>
+                    </div>
+                    <p class="text-gray-700">Access to all services and features is suspended</p>
+                </div>
+                <div class="flex items-start">
+                    <div class="bg-green-100 rounded-full p-1 mr-3 mt-1">
+                        <svg class="w-4 h-4 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd"
+                                  d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                  clip-rule="evenodd"/>
+                        </svg>
+                    </div>
+                    <p class="text-gray-700">Your data and information remain secure and preserved</p>
+                </div>
+                <div class="flex items-start">
+                    <div class="bg-green-100 rounded-full p-1 mr-3 mt-1">
+                        <svg class="w-4 h-4 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd"
+                                  d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                  clip-rule="evenodd"/>
+                        </svg>
+                    </div>
+                    <p class="text-gray-700">You can reactivate your account at any time</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Common Reasons -->
+        <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-6 mb-8">
+            <h4 class="font-semibold text-yellow-800 mb-3">Common Reasons for Deactivation:</h4>
+            <ul class="text-yellow-700 text-sm space-y-1">
+                <li>• Extended period of inactivity</li>
+                <li>• User-requested account deactivation</li>
+                <li>• Security concerns or suspicious activity</li>
+                <li>• Policy violations that require review</li>
+                <li>• Maintenance or system updates</li>
+            </ul>
+        </div>
+
+        <!-- Reactivation Process -->
+        <div class="bg-blue-50 rounded-lg p-6 mb-8">
+            <h3 class="text-xl font-semibold text-blue-800 mb-4">Want to Reactivate Your Account?</h3>
+            <p class="text-blue-700 mb-4">
+                If you'd like to reactivate your account and regain access to our services, simply click the button
+                below.
+            </p>
+            <div class="text-center">
+                <a th:href="${reactivationUrl ?: '#'}"
+                   class="inline-block bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-8 rounded-lg transition duration-200 shadow-lg hover:shadow-xl">
+                    Reactivate Account
+                </a>
+            </div>
+        </div>
+
+        <!-- Data Protection Notice -->
+        <div class="bg-green-50 border border-green-200 rounded-lg p-6 mb-8">
+            <div class="flex items-start">
+                <svg class="w-6 h-6 text-green-600 mt-1 mr-3" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd"
+                          d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                          clip-rule="evenodd"/>
+                </svg>
+                <div>
+                    <h4 class="font-semibold text-green-800 mb-2">Your Data is Safe</h4>
+                    <p class="text-green-700 text-sm">
+                        Rest assured that all your personal information, settings, and data remain secure and protected
+                        during the deactivation period. Nothing will be lost when you reactivate your account.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Support Section -->
+        <div class="bg-gray-50 rounded-lg p-6 text-center">
+            <h4 class="font-semibold text-gray-800 mb-2">Questions About Your Account?</h4>
+            <p class="text-gray-600 text-sm mb-4">
+                If you have questions about why your account was deactivated or need assistance with reactivation, our
+                support team is ready to help.
+            </p>
+            <a th:href="${supportUrl ?: 'mailto:support@company.com'}"
+               class="text-red-600 hover:text-red-700 font-medium text-sm">
+                Contact Support
+            </a>
+        </div>
+    </div>
+</div>
+</body>
+</html>
