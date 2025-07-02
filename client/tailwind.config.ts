@@ -1,8 +1,12 @@
+import { color } from "framer-motion";
 import type { Config } from "tailwindcss";
 
 const config: Config = {
   theme: {
     extend: {
+      colors: {
+        authBtn: "#9810fa",
+      },
       animation: {
         float: "float 6s ease-in-out infinite",
         "pulse-slow": "pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite",
