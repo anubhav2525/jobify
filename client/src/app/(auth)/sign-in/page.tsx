@@ -54,7 +54,7 @@ const SignInPage = ({ className }: React.ComponentProps<"div">) => {
           <CardTitle className="text-xl">Welcome back</CardTitle>
           <CardDescription>
             <div className="text-center text-sm text-muted-foreground text">
-              Don't have an account?{" "}
+              Don&apos;t have an account?{" "}
               <Link
                 href="/sign-up"
                 className="text-purple-500 hover:text-purple-600"

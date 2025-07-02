@@ -4,19 +4,20 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Lens } from "@/components/ui/lens";
 import { BoxReveal } from "@/components/ui/box-reveal";
+import Image from "next/image";
 
 const AuthIntroSection = () => {
   return (
     <Card className="relative h-full w-fit shadow-none rounded-none bg-white/40 backdrop-blur-md border-none">
-      <CardHeader >
+      <CardHeader>
         <Lens
           zoomFactor={2}
           lensSize={150}
           isStatic={false}
           ariaLabel="Zoom Area"
         >
-          <img
-            src="/assets/images/app-layout/auth-intro.webp"
+          <Image
+            src={"/assets/images/app-layout/auth-intro.webp"}
             alt="image placeholder"
             width={500}
             height={500}

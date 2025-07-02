@@ -14,7 +14,6 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import Link from "next/link";
 import {
   Form,
   FormControl,
@@ -79,7 +78,7 @@ const ResetPasswordPage = ({ className }: React.ComponentProps<"div">) => {
                       />
                     </FormControl>
                     <FormDescription>
-                      We'll send you an One Time Password on your registered
+                      We&apos;ll send you an One Time Password on your registered
                       email.
                     </FormDescription>
                     <FormMessage />
