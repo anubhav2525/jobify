@@ -102,8 +102,7 @@ public class Candidate {
     @CollectionTable(name = "candidate_skills", joinColumns = @JoinColumn(name = "candidate_id"))
     @Column(name = "skill")
     private List<String> skills = new ArrayList<>();
-
-
+    
     @OneToMany(mappedBy = "candidate", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<CandidateEducation> education = new ArrayList<>();
 

@@ -22,12 +22,12 @@ public class User {
     private Long id;
 
     @Email(message = "Invalid email address")
-    @NotEmpty(message = "Email address is required")
+    @NotEmpty(message = "Email address required")
     @Size(max = 50, message = "Email must be lower than 50 characters")
     @Column(nullable = false, unique = true)
     private String email;
 
-    @NotEmpty(message = "Password is required")
+    @NotEmpty(message = "Password required")
     @Size(min = 8, max = 255, message = "Password must be 8 - 255 characters")
     @Column(nullable = false)
     private String password;
@@ -35,6 +35,9 @@ public class User {
     @NotEmpty(message = "Phone number required")
     @Size(min = 10, max = 10, message = "Phone number should be 10 digits")
     private String phone;
+
+    @NotEmpty(message = "Country required")
+    private String country;
 
     @Size(min = 3, max = 3, message = "Country code should be 3 digits")
     @Column(name = "country_code", nullable = false)

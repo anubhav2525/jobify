@@ -1,8 +1,6 @@
 "use client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { toast } from "sonner";
-import { z } from "zod";
 import {
   Form,
   FormControl,
@@ -36,42 +34,20 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Check, ChevronsUpDown } from "lucide-react";
-import {
-  countryCodes,
-  findCountryByCode,
-} from "@/shared/enum/country-code/country-code";
+import { countryCodes } from "@/shared/enum/country-code";
 import Link from "next/link";
-
-const FormSchema = z.object({
-  country: z.string({
-    required_error: "Please select a country.",
-  }),
-  username: z.string().min(2, {
-    message: "Username must be at least 2 characters.",
-  }),
-  phoneNumber: z.string().min(1, "Phone number is required"),
-});
+import { UserRegistrationSchema, UserRegistrationSchemaType } from "@/schemas/user/user-schema";
 
 const SignUpPage = ({ className }: React.ComponentProps<"div">) => {
-  const form = useForm<z.infer<typeof FormSchema>>({
-    resolver: zodResolver(FormSchema),
+  const form = useForm<UserRegistrationSchemaType>({
+    resolver: zodResolver(UserRegistrationSchema),
     defaultValues: {
-      username: "",
-      country: "IN",
-      phoneNumber: "",
+      firstName: "", lastName: "", middleName: "", email: "", password: "", confirmPassword: "", country: "", countryCode: "", phone: "", role: ""
     },
-  });
+  })
 
-  const selectedCountry = findCountryByCode(form.watch("country"));
-
-  function onSubmit(data: z.infer<typeof FormSchema>) {
-    toast("You submitted the following values", {
-      description: (
-        <pre className="mt-2 w-[320px] rounded-md bg-neutral-950 p-4">
-          <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-        </pre>
-      ),
-    });
+  const onSubmit = (data: UserRegistrationSchemaType) => {
+    console.log("User registration: ", data)
   }
 
   return (
@@ -96,7 +72,7 @@ const SignUpPage = ({ className }: React.ComponentProps<"div">) => {
             >
               <FormField
                 control={form.control}
-                name="username"
+                name="firstName"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>First name</FormLabel>
@@ -113,7 +89,7 @@ const SignUpPage = ({ className }: React.ComponentProps<"div">) => {
               />
               <FormField
                 control={form.control}
-                name="username"
+                name="middleName"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Middle name</FormLabel>
@@ -130,7 +106,7 @@ const SignUpPage = ({ className }: React.ComponentProps<"div">) => {
               />
               <FormField
                 control={form.control}
-                name="username"
+                name="lastName"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Last name</FormLabel>
@@ -149,7 +125,7 @@ const SignUpPage = ({ className }: React.ComponentProps<"div">) => {
               <div className="grid md:col-span-2">
                 <FormField
                   control={form.control}
-                  name="username"
+                  name="email"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Email address</FormLabel>
@@ -184,16 +160,11 @@ const SignUpPage = ({ className }: React.ComponentProps<"div">) => {
                             >
                               {field.value ? (
                                 <span className="flex items-center gap-2">
-                                  {/* <span className="font-mono text-sm">
-                                      {field.value}
-                                    </span> */}
-                                  <span>
-                                    {
-                                      countryCodes.find(
-                                        (c) => c.code === field.value
-                                      )?.label
-                                    }
-                                  </span>
+                                  {
+                                    countryCodes.find(
+                                      (c) => c.label === field.value
+                                    )?.label
+                                  }
                                 </span>
                               ) : (
                                 "Select country"
@@ -216,7 +187,8 @@ const SignUpPage = ({ className }: React.ComponentProps<"div">) => {
                                     value={`${country.label} ${country.code} ${country.dialingCode}`}
                                     key={country.code}
                                     onSelect={() => {
-                                      form.setValue("country", country.code);
+                                      form.setValue("country", country.label);
+                                      form.setValue("countryCode", country.dialingCode)
                                     }}
                                   >
                                     <div className="flex items-center justify-between w-full">
@@ -252,7 +224,7 @@ const SignUpPage = ({ className }: React.ComponentProps<"div">) => {
               </div>
               <FormField
                 control={form.control}
-                name="phoneNumber"
+                name="phone"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Phone Number</FormLabel>
@@ -260,7 +232,7 @@ const SignUpPage = ({ className }: React.ComponentProps<"div">) => {
                       <div className="flex">
                         <div className="flex items-center px-3 border border-r-0 rounded-l-md bg-white">
                           <span className="text-sm font-mono">
-                            {selectedCountry?.dialingCode || "+"}
+                            {form.getValues("countryCode") || "+"}
                           </span>
                         </div>
                         <Input
@@ -276,7 +248,7 @@ const SignUpPage = ({ className }: React.ComponentProps<"div">) => {
               />
               <FormField
                 control={form.control}
-                name="username"
+                name="password"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Choose password</FormLabel>
@@ -293,7 +265,7 @@ const SignUpPage = ({ className }: React.ComponentProps<"div">) => {
               />
               <FormField
                 control={form.control}
-                name="username"
+                name="confirmPassword"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Confirm password</FormLabel>

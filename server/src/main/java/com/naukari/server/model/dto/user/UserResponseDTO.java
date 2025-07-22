@@ -18,6 +18,7 @@ public class UserResponseDTO {
     private String profileImageUrl;
     private String role;
     private String phone;
+    private String country;
     private String countryCode;
     private boolean isActive;
     private boolean isAccountVerified;

@@ -22,4 +22,7 @@ public class UserUpdateDTO {
     @NotBlank
     @Size(min = 10, max = 10, message = "Phone number should be 10 digits")
     private String phone;
+
+    @NotEmpty(message = "Country required")
+    private String country;
 }

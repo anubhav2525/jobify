@@ -75,6 +75,7 @@ public class UserServiceImpl implements UserService {
             user.setPassword(passwordEncoder.encode(userRegistration.getPassword().trim()));
             user.setFirstName(userRegistration.getFirstName().trim());
             user.setLastName(userRegistration.getLastName().trim());
+            user.setCountry(user.getCountry());
             user.setMiddleName(userRegistration.getMiddleName().trim());
             user.setPhone(userRegistration.getPhone().trim());
             user.setCountryCode(userRegistration.getCountryCode().trim());
@@ -255,6 +256,11 @@ public class UserServiceImpl implements UserService {
 
             if (updateDTO.getMiddleName() != null && !updateDTO.getMiddleName().trim().equalsIgnoreCase(user.getMiddleName())) {
                 user.setMiddleName(updateDTO.getMiddleName().trim());
+                isUpdated = true;
+            }
+
+            if (updateDTO.getCountry() != null && !updateDTO.getCountry().trim().equalsIgnoreCase(user.getCountry())) {
+                user.setCountry(updateDTO.getCountry());
                 isUpdated = true;
             }
 

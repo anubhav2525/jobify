@@ -9,5 +9,4 @@ public enum EducationDegreeType {
     CERTIFICATION,
     POSTGRADUATE_DIPLOMA,
     OTHER
-
 }

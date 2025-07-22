@@ -22,6 +22,9 @@ public class UserRegistrationDTO {
     @Size(min = 10, max = 10, message = "Phone number should be 10 digits")
     private String phone;
 
+    @NotEmpty(message = "Country required")
+    private String country;
+
     @Size(min = 3, max = 3, message = "Country code should be 3 digits")
     private String countryCode;
 
@@ -36,7 +39,7 @@ public class UserRegistrationDTO {
     @Size(max = 100, message = "Middle name must not exceed 100 characters")
     private String middleName;
 
-    private MultipartFile profileImage;
+//    private MultipartFile profileImage;
 
     private UserRole role = UserRole.CANDIDATE;
 }
