@@ -1,8 +1,11 @@
 package com.naukari.server.utils;
 
 
+import com.naukari.server.service.implementation.user.UserServiceImpl;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import lombok.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +22,8 @@ import java.util.Map;
 
 @Component
 public class EmailService {
+
+    private static final Logger logger = LoggerFactory.getLogger(EmailService.class);
 
     @Autowired
     private JavaMailSender javaMailSender;
@@ -103,6 +108,7 @@ public class EmailService {
             String subject = "Account Verification - OTP Required";
             return sendHtmlEmail(to, subject, "/email/account-verification-mail", variables);
         } catch (Exception e) {
+            logger.error("Error sending verification email to {}: {}", userName, e.getMessage(), e);
             return new Response<>("Error", "Failed to send verification email: " + e.getMessage(), null);
         }
     }

@@ -49,7 +49,7 @@ public class CompanyDocument {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "verification_status", length = 20)
-    private final VerificationStatus verificationStatus = VerificationStatus.PENDING;
+    private VerificationStatus verificationStatus = VerificationStatus.PENDING;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "verified_by")

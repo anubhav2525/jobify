@@ -37,6 +37,7 @@ import { Check, ChevronsUpDown } from "lucide-react";
 import { countryCodes } from "@/shared/enum/country-code";
 import Link from "next/link";
 import { UserRegistrationSchema, UserRegistrationSchemaType } from "@/schemas/user/user-schema";
+import { userRegistration } from "@/services/auth/AuthService";
 
 const SignUpPage = ({ className }: React.ComponentProps<"div">) => {
   const form = useForm<UserRegistrationSchemaType>({
@@ -46,8 +47,8 @@ const SignUpPage = ({ className }: React.ComponentProps<"div">) => {
     },
   })
 
-  const onSubmit = (data: UserRegistrationSchemaType) => {
-    console.log("User registration: ", data)
+  const onSubmit = async(data: UserRegistrationSchemaType) => {
+    await userRegistration(data);
   }
 
   return (

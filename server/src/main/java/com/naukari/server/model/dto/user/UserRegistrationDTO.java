@@ -3,7 +3,6 @@ package com.naukari.server.model.dto.user;
 import com.naukari.server.model.enums.UserRole;
 import jakarta.validation.constraints.*;
 import lombok.*;
-import org.springframework.web.multipart.MultipartFile;
 
 @Data
 @NoArgsConstructor
@@ -25,7 +24,7 @@ public class UserRegistrationDTO {
     @NotEmpty(message = "Country required")
     private String country;
 
-    @Size(min = 3, max = 3, message = "Country code should be 3 digits")
+    @Size(min = 2, max = 3, message = "Incorrect Country code")
     private String countryCode;
 
     @NotBlank(message = "First name is required")
@@ -42,4 +41,8 @@ public class UserRegistrationDTO {
 //    private MultipartFile profileImage;
 
     private UserRole role = UserRole.CANDIDATE;
+
+    public void setRole(UserRole userRole) {
+        this.role = userRole;
+    }
 }

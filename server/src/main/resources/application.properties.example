@@ -76,8 +76,8 @@ spring.thymeleaf.cache=false
 # ==============================================
 # FILES PATH CONFIGURATION
 # ==============================================
-image.path=uploads/images/
-file.path=uploads/files/
+image.path=/src/main/resources/static/uploads/images/
+file.path=/src/main/resources/static/uploads/files/
 image.max.size=5242880
 
 # ==============================================

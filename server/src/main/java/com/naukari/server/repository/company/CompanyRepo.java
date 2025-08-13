@@ -24,6 +24,8 @@ public interface CompanyRepo extends JpaRepository<Company, Long> {
     // Check if company slug already exists
     boolean existsByCompanySlug(String companySlug);
 
+    boolean existsByNameIgnoreCase(String companyName);
+
     // Filter by active companies
     List<Company> findAllByIsActiveTrue();
 

@@ -11,6 +11,8 @@ import com.naukari.server.utils.EmailService;
 import com.naukari.server.utils.ImageHandler;
 import com.naukari.server.utils.RandomStringGenerator;
 import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -51,6 +53,8 @@ public class UserServiceImpl implements UserService {
 
     private final EmailService emailService;
 
+    private static final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
+
     public UserServiceImpl(UserRepo userRepo, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager, JwtUtil jwtUtil, ModelMapper modelMapper, RandomStringGenerator randomStringGenerator, EmailService emailService) {
         this.userRepo = userRepo;
         this.passwordEncoder = passwordEncoder;
@@ -64,10 +68,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public CustomResponse<UserVerificationResponseDTO> createUser(UserRegistrationDTO userRegistration) {
         try {
+            logger.info("Creating user with email: {}", userRegistration.getEmail());
+
             // Check if user already exists
             if (userRepo.existsByEmail(userRegistration.getEmail()))
-                return new CustomResponse<>(ResponseStatus.ALREADY_EXISTS,
-                        "User with this email already exists", null);
+                return new CustomResponse<>(ResponseStatus.ALREADY_EXISTS, "User with this email already exists", null);
 
             // Create new user
             User user = new User();
@@ -75,7 +80,7 @@ public class UserServiceImpl implements UserService {
             user.setPassword(passwordEncoder.encode(userRegistration.getPassword().trim()));
             user.setFirstName(userRegistration.getFirstName().trim());
             user.setLastName(userRegistration.getLastName().trim());
-            user.setCountry(user.getCountry());
+            user.setCountry(userRegistration.getCountry());
             user.setMiddleName(userRegistration.getMiddleName().trim());
             user.setPhone(userRegistration.getPhone().trim());
             user.setCountryCode(userRegistration.getCountryCode().trim());
@@ -90,23 +95,20 @@ public class UserServiceImpl implements UserService {
             user.setToken(otp);
             user.setTokenExpirationAt(LocalDateTime.now().plusMinutes(15));
             User savedUser = userRepo.save(user);
+            logger.info("User created successfully with ID: {}", savedUser.getId());
 
             // Send verification email
-            EmailService.Response<Void> emailResponse = emailService.sendAccountVerificationEmail(
-                    user.getEmail(), fullName, otp);
+            EmailService.Response<Void> emailResponse = emailService.sendAccountVerificationEmail(user.getEmail(), fullName, otp);
 
             UserVerificationResponseDTO responseDTO = convertToVerificationDTO(savedUser);
             if ("Success".equals(emailResponse.getStatus())) {
-                return new CustomResponse<>(ResponseStatus.CREATED,
-                        "User created successfully. Verification email sent.", responseDTO);
+                return new CustomResponse<>(ResponseStatus.CREATED, "User created successfully. Verification email sent.", responseDTO);
             } else {
-                return new CustomResponse<>(ResponseStatus.CREATED,
-                        "User created successfully, but failed to send verification email: " +
-                                emailResponse.getMessage(), responseDTO);
+                return new CustomResponse<>(ResponseStatus.CREATED, "User created successfully, but failed to send verification email: " + emailResponse.getMessage(), responseDTO);
             }
         } catch (Exception e) {
-            return new CustomResponse<>(ResponseStatus.INTERNAL_ERROR,
-                    "Failed to create user: " + e.getMessage(), null);
+            logger.info("User account creation failed: {}", e.getMessage());
+            return new CustomResponse<>(ResponseStatus.INTERNAL_ERROR, "Failed to create user: " + e.getMessage(), null);
         }
     }
 
@@ -139,29 +141,21 @@ public class UserServiceImpl implements UserService {
             EmailService.Response<Void> emailResponse = emailService.sendWelcomeEmail(user.getEmail(), user.getFirstName());
 
             if ("Success".equals(emailResponse.getStatus()))
-                return new CustomResponse<>(ResponseStatus.CREATED,
-                        "User verified", null);
+                return new CustomResponse<>(ResponseStatus.CREATED, "User verified", null);
             else
-                return new CustomResponse<>(ResponseStatus.CREATED,
-                        "User verified, but failed to send verification email: " +
-                                emailResponse.getMessage(), null);
+                return new CustomResponse<>(ResponseStatus.CREATED, "User verified, but failed to send verification email: " + emailResponse.getMessage(), null);
         } catch (Exception e) {
-            return new CustomResponse<>(ResponseStatus.INTERNAL_ERROR,
-                    "Failed to verify email: " + e.getMessage(), null);
+            return new CustomResponse<>(ResponseStatus.INTERNAL_ERROR, "Failed to verify email: " + e.getMessage(), null);
         }
     }
 
     @Override
     public CustomResponse<UserResponseDTO> getUserById(Long id) {
         try {
-            if (id == null || id <= 0) {
-                return new CustomResponse<>(ResponseStatus.BAD_REQUEST, "Invalid user ID", null);
-            }
+            if (id == null || id <= 0) return new CustomResponse<>(ResponseStatus.BAD_REQUEST, "Invalid user ID", null);
 
             User user = userRepo.findById(id).orElse(null);
-            if (user == null) {
-                return new CustomResponse<>(ResponseStatus.NOT_FOUND, "User not found", null);
-            }
+            if (user == null) return new CustomResponse<>(ResponseStatus.NOT_FOUND, "User not found", null);
 
             // Check if user is active
             if (!user.isActive()) {
@@ -171,8 +165,7 @@ public class UserServiceImpl implements UserService {
             UserResponseDTO userResponse = convertToResponseDTO(user);
             return new CustomResponse<>(ResponseStatus.SUCCESS, "User found", userResponse);
         } catch (Exception e) {
-            return new CustomResponse<>(ResponseStatus.INTERNAL_ERROR,
-                    "Failed to get user by " + id + " : " + e.getMessage(), null);
+            return new CustomResponse<>(ResponseStatus.INTERNAL_ERROR, "Failed to get user by " + id + " : " + e.getMessage(), null);
         }
     }
 
@@ -196,8 +189,7 @@ public class UserServiceImpl implements UserService {
             UserResponseDTO userResponse = convertToResponseDTO(user);
             return new CustomResponse<>(ResponseStatus.SUCCESS, "User found", userResponse);
         } catch (Exception e) {
-            return new CustomResponse<>(ResponseStatus.INTERNAL_ERROR,
-                    "Failed to get user by " + email + " : " + e.getMessage(), null);
+            return new CustomResponse<>(ResponseStatus.INTERNAL_ERROR, "Failed to get user by " + email + " : " + e.getMessage(), null);
         }
     }
 
@@ -207,18 +199,13 @@ public class UserServiceImpl implements UserService {
 
 
             List<User> users = userRepo.findAll();
-            if (users.isEmpty())
-                return new CustomResponse<>(ResponseStatus.NOT_FOUND, "No users found", null);
+            if (users.isEmpty()) return new CustomResponse<>(ResponseStatus.NOT_FOUND, "No users found", null);
 
-            List<UserResponseDTO> userResponses = users.stream()
-                    .filter(User::isActive)
-                    .map(this::convertToResponseDTO)
-                    .toList();
+            List<UserResponseDTO> userResponses = users.stream().filter(User::isActive).map(this::convertToResponseDTO).toList();
 
             return new CustomResponse<>(ResponseStatus.SUCCESS, "Users found", userResponses);
         } catch (Exception e) {
-            return new CustomResponse<>(ResponseStatus.INTERNAL_ERROR,
-                    "Failed to get users: " + e.getMessage(), null);
+            return new CustomResponse<>(ResponseStatus.INTERNAL_ERROR, "Failed to get users: " + e.getMessage(), null);
         }
     }
 
@@ -233,8 +220,7 @@ public class UserServiceImpl implements UserService {
 
             User user = userRepo.findByEmail(email).orElse(null);
 
-            if (user == null)
-                return new CustomResponse<>(ResponseStatus.NOT_FOUND, "User not found", null);
+            if (user == null) return new CustomResponse<>(ResponseStatus.NOT_FOUND, "User not found", null);
 
             // Check if user is active
             if (!user.isActive())
@@ -276,8 +262,7 @@ public class UserServiceImpl implements UserService {
                 return new CustomResponse<>(ResponseStatus.SUCCESS, "User updated successfully", userResponseDTO);
             } else return new CustomResponse<>(ResponseStatus.NO_CONTENT, "No changes to update", null);
         } catch (Exception e) {
-            return new CustomResponse<>(ResponseStatus.INTERNAL_ERROR,
-                    "Failed to update users: " + e.getMessage(), null);
+            return new CustomResponse<>(ResponseStatus.INTERNAL_ERROR, "Failed to update users: " + e.getMessage(), null);
         }
     }
 
@@ -288,9 +273,7 @@ public class UserServiceImpl implements UserService {
                 return new CustomResponse<>(ResponseStatus.BAD_REQUEST, "Email is required", null);
 
             User user = userRepo.findByEmail(email.toLowerCase().trim()).orElse(null);
-            if (user == null) {
-                return new CustomResponse<>(ResponseStatus.NOT_FOUND, "User not found", null);
-            }
+            if (user == null) return new CustomResponse<>(ResponseStatus.NOT_FOUND, "User not found", null);
 
             // Check if user is active
             if (!user.isActive())
@@ -310,10 +293,10 @@ public class UserServiceImpl implements UserService {
 
             // save to database
             userRepo.save(user);
+            logger.info("Change password request completed for email: {}", email);
             return new CustomResponse<>(ResponseStatus.SUCCESS, "Password changed", null);
         } catch (Exception e) {
-            return new CustomResponse<>(ResponseStatus.INTERNAL_ERROR,
-                    "Failed to change password: " + e.getMessage(), null);
+            return new CustomResponse<>(ResponseStatus.INTERNAL_ERROR, "Failed to change password: " + e.getMessage(), null);
         }
     }
 
@@ -324,8 +307,7 @@ public class UserServiceImpl implements UserService {
                 return new CustomResponse<>(ResponseStatus.BAD_REQUEST, "Email is required", null);
 
             User user = userRepo.findByEmail(email).orElse(null);
-            if (user == null)
-                return new CustomResponse<>(ResponseStatus.NOT_FOUND, "User not found", null);
+            if (user == null) return new CustomResponse<>(ResponseStatus.NOT_FOUND, "User not found", null);
 
             if (!user.isActive())
                 return new CustomResponse<>(ResponseStatus.ALREADY_EXISTS, "User is already deactivated", null);
@@ -336,8 +318,7 @@ public class UserServiceImpl implements UserService {
             userRepo.save(user);
             return new CustomResponse<>(ResponseStatus.SUCCESS, "User deactivated successfully", "User account has been deactivated");
         } catch (Exception e) {
-            return new CustomResponse<>(ResponseStatus.INTERNAL_ERROR,
-                    "Failed to deactivate user: " + e.getMessage(), null);
+            return new CustomResponse<>(ResponseStatus.INTERNAL_ERROR, "Failed to deactivate user: " + e.getMessage(), null);
         }
     }
 
@@ -362,8 +343,7 @@ public class UserServiceImpl implements UserService {
             userRepo.save(user);
             return new CustomResponse<>(ResponseStatus.SUCCESS, "User deleted successfully", "User account has been deleted");
         } catch (Exception e) {
-            return new CustomResponse<>(ResponseStatus.INTERNAL_ERROR,
-                    "Failed to delete user: " + e.getMessage(), null);
+            return new CustomResponse<>(ResponseStatus.INTERNAL_ERROR, "Failed to delete user: " + e.getMessage(), null);
         }
     }
 
@@ -396,10 +376,9 @@ public class UserServiceImpl implements UserService {
             // Authenticate user
             Authentication authentication;
             try {
-                authentication = authenticationManager.authenticate(
-                        new UsernamePasswordAuthenticationToken(email, password)
-                );
+                authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, password));
                 SecurityContextHolder.getContext().setAuthentication(authentication);
+                logger.info("User login completed for email: {}", userLoginDTO.getEmail());
             } catch (BadCredentialsException e) {
                 return new CustomResponse<>(ResponseStatus.UNAUTHORIZED, "Invalid email or password", null);
             }
@@ -421,8 +400,7 @@ public class UserServiceImpl implements UserService {
 
             return new CustomResponse<>(ResponseStatus.SUCCESS, "Login successful", responseDTO);
         } catch (Exception e) {
-            return new CustomResponse<>(ResponseStatus.INTERNAL_ERROR,
-                    "Login failed: " + e.getMessage(), null);
+            return new CustomResponse<>(ResponseStatus.INTERNAL_ERROR, "Login failed: " + e.getMessage(), null);
         }
     }
 
@@ -444,8 +422,7 @@ public class UserServiceImpl implements UserService {
 
             return new CustomResponse<>(ResponseStatus.SUCCESS, "Email verification status retrieved", user.isEmailVerified());
         } catch (Exception e) {
-            return new CustomResponse<>(ResponseStatus.INTERNAL_ERROR,
-                    "Failed to check email verification status: " + e.getMessage(), null);
+            return new CustomResponse<>(ResponseStatus.INTERNAL_ERROR, "Failed to check email verification status: " + e.getMessage(), null);
         }
     }
 
@@ -459,8 +436,7 @@ public class UserServiceImpl implements UserService {
                 return new CustomResponse<>(ResponseStatus.BAD_REQUEST, "Image file is required", null);
 
             User user = userRepo.findByEmail(email.toLowerCase().trim()).orElse(null);
-            if (user == null)
-                return new CustomResponse<>(ResponseStatus.NOT_FOUND, "User not found", null);
+            if (user == null) return new CustomResponse<>(ResponseStatus.NOT_FOUND, "User not found", null);
 
             // Check if user is active
             if (!user.isActive())
@@ -472,8 +448,7 @@ public class UserServiceImpl implements UserService {
             userRepo.save(user);
             return new CustomResponse<>(ResponseStatus.SUCCESS, "Profile image updated successfully", user.getProfileImageUrl());
         } catch (Exception e) {
-            return new CustomResponse<>(ResponseStatus.INTERNAL_ERROR,
-                    "Failed to update profile image: " + e.getMessage(), null);
+            return new CustomResponse<>(ResponseStatus.INTERNAL_ERROR, "Failed to update profile image: " + e.getMessage(), null);
         }
     }
 
@@ -488,8 +463,7 @@ public class UserServiceImpl implements UserService {
 
             // Fetch user
             User user = userRepo.findByEmail(email.toLowerCase().trim()).orElse(null);
-            if (user == null)
-                return new CustomResponse<>(ResponseStatus.NOT_FOUND, "User not found", null);
+            if (user == null) return new CustomResponse<>(ResponseStatus.NOT_FOUND, "User not found", null);
 
             if (!user.isActive())
                 return new CustomResponse<>(ResponseStatus.UNAUTHORIZED, "User account is deactivated", null);
@@ -505,11 +479,9 @@ public class UserServiceImpl implements UserService {
 
             return new CustomResponse<>(ResponseStatus.SUCCESS, "Profile image updated successfully", updatedImageUrl);
         } catch (IOException e) {
-            return new CustomResponse<>(ResponseStatus.INTERNAL_ERROR,
-                    "Image upload failed: " + e.getMessage(), null);
+            return new CustomResponse<>(ResponseStatus.INTERNAL_ERROR, "Image upload failed: " + e.getMessage(), null);
         } catch (Exception e) {
-            return new CustomResponse<>(ResponseStatus.INTERNAL_ERROR,
-                    "Failed to update profile image: " + e.getMessage(), null);
+            return new CustomResponse<>(ResponseStatus.INTERNAL_ERROR, "Failed to update profile image: " + e.getMessage(), null);
         }
     }
 
@@ -520,8 +492,7 @@ public class UserServiceImpl implements UserService {
                 return new CustomResponse<>(ResponseStatus.BAD_REQUEST, "Email is required", null);
 
             User user = userRepo.findByEmail(email).orElse(null);
-            if (user == null)
-                return new CustomResponse<>(ResponseStatus.NOT_FOUND, "User not found", null);
+            if (user == null) return new CustomResponse<>(ResponseStatus.NOT_FOUND, "User not found", null);
 
             // Check if user is active
             if (!user.isActive())
@@ -536,19 +507,15 @@ public class UserServiceImpl implements UserService {
             User savedUser = userRepo.save(user);
 
             // Send verification email
-            EmailService.Response<Void> emailResponse = emailService.sendPasswordResetEmail(
-                    user.getEmail(), fullName, otp);
+            EmailService.Response<Void> emailResponse = emailService.sendPasswordResetEmail(user.getEmail(), fullName, otp);
 
             UserVerificationResponseDTO responseDTO = convertToVerificationDTO(savedUser);
             if ("Success".equalsIgnoreCase(emailResponse.getStatus()))
-                return new CustomResponse<>(ResponseStatus.SUCCESS,
-                        "Password reset OTP sent successfully to your email", responseDTO);
+                return new CustomResponse<>(ResponseStatus.SUCCESS, "Password reset OTP sent successfully to your email", responseDTO);
             else
-                return new CustomResponse<>(ResponseStatus.SUCCESS,
-                        "OTP generated but failed to send email: " + emailResponse.getMessage(), responseDTO);
+                return new CustomResponse<>(ResponseStatus.SUCCESS, "OTP generated but failed to send email: " + emailResponse.getMessage(), responseDTO);
         } catch (Exception e) {
-            return new CustomResponse<>(ResponseStatus.INTERNAL_ERROR,
-                    "Failed to update profile image: " + e.getMessage(), null);
+            return new CustomResponse<>(ResponseStatus.INTERNAL_ERROR, "Failed to update profile image: " + e.getMessage(), null);
         }
     }
 
@@ -562,8 +529,7 @@ public class UserServiceImpl implements UserService {
                 return new CustomResponse<>(ResponseStatus.BAD_REQUEST, "OTP and new password are required", null);
 
             User user = userRepo.findByEmail(email).orElse(null);
-            if (user == null)
-                return new CustomResponse<>(ResponseStatus.NOT_FOUND, "User not found", null);
+            if (user == null) return new CustomResponse<>(ResponseStatus.NOT_FOUND, "User not found", null);
 
             // Check if user is active
             if (!user.isActive())
@@ -583,19 +549,22 @@ public class UserServiceImpl implements UserService {
             user.setTokenExpirationAt(null);
             user.setUpdatedAt(LocalDateTime.now());
             userRepo.save(user);
-
+            logger.info("Update password request completed for email: {}", email);
             return new CustomResponse<>(ResponseStatus.SUCCESS, "Password updated successfully", null);
         } catch (Exception e) {
-            return new CustomResponse<>(ResponseStatus.INTERNAL_ERROR,
-                    "Failed to update password: " + e.getMessage(), null);
+            return new CustomResponse<>(ResponseStatus.INTERNAL_ERROR, "Failed to update password: " + e.getMessage(), null);
         }
     }
 
-    private UserResponseDTO convertToResponseDTO(User savedUser) {
-        return this.modelMapper.map(savedUser, UserResponseDTO.class);
+    private UserResponseDTO convertToResponseDTO(User user) {
+        return this.modelMapper.map(user, UserResponseDTO.class);
     }
 
     private UserVerificationResponseDTO convertToVerificationDTO(User user) {
         return this.modelMapper.map(user, UserVerificationResponseDTO.class);
+    }
+
+    public User convertToUser(UserResponseDTO userResponseDTO){
+        return this.modelMapper.map(userResponseDTO, User.class);
     }
 }

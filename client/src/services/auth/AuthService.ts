@@ -1,4 +1,3 @@
-"use server"
 import {
     UserForgetPasswordType,
     UserLoginSchemaType,
@@ -15,15 +14,16 @@ export const userRegistration = async (values: UserRegistrationSchemaType) => {
         const res = await axios.post(`${serverConfig.authApiEndpoint}/sign-up`, values);
         if (res.status === 201) {
             toast.success("User created successfully", {
-                description: "Your account has been created successfully, Let's verify",
+                description: res.data.message || "Please verify your email to complete the registration.",
             })
 
             // extract values
             const data = res.data.data;
+            console.log(data);
             // redirect("/verify-email",data)
         } else if (res.status === 208) {
             toast.info("User already exist", {
-                description: "Your account has not been created",
+                description: res.data.message || "Please login to your account.",
             })
         }
 
@@ -31,7 +31,9 @@ export const userRegistration = async (values: UserRegistrationSchemaType) => {
     } catch (error: unknown) {
         if (axios.isAxiosError(error)) {
             const message = error.response?.data?.message || "Account creation failed.";
-            toast.error(message);
+            toast(message,{description:"Please try again."});
+          
+            console.error("Error during user registration:", message);
         } else {
             toast.error("An unexpected error occurred.");
         }

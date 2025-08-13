@@ -39,7 +39,7 @@ public class User {
     @NotEmpty(message = "Country required")
     private String country;
 
-    @Size(min = 3, max = 3, message = "Country code should be 3 digits")
+    @Size(min = 2, max = 3, message = "Incorrect Country code")
     @Column(name = "country_code", nullable = false)
     private String countryCode;
 

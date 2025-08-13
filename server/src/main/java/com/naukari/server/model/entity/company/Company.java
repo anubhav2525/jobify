@@ -12,7 +12,9 @@ import org.hibernate.annotations.*;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Entity
 @Data
@@ -88,7 +90,8 @@ public class Company {
     private boolean isActive = true;
 
     @OneToMany(mappedBy = "company", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<CompanyDocument> documents = new ArrayList<>();
+    @MapKey(name = "documentType")
+    private Map<FileType, CompanyDocument> documents = new HashMap<>();
 
     @Embedded
     private SocialLink social;

@@ -12,7 +12,7 @@ const RootLayout = ({
     children: React.ReactNode;
 }>) => {
     return (
-        <html lang="en" className="dark">
+        <html lang="en" className="dar">
         <body>{children}</body>
         </html>
     );
